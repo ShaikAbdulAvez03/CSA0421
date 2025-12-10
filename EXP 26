@@ -1,0 +1,51 @@
+/* file_management.c */
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
+
+int main() {
+    int fd;
+    char buf[256];
+
+    /* create & write */
+    fd = open("fm_demo.txt", O_CREAT | O_TRUNC | O_WRONLY, 0644);
+    write(fd, "Line1: Hello\nLine2: File Management Demo\n", 36);
+    close(fd);
+
+    /* read */
+    fd = open("fm_demo.txt", O_RDONLY);
+    ssize_t n = read(fd, buf, sizeof(buf)-1);
+    if(n>0) { buf[n] = '\0'; printf("Content:\n%s\n", buf); }
+    close(fd);
+
+    /* lseek */
+    fd = open("fm_demo.txt", O_RDONLY);
+    lseek(fd, 7, SEEK_SET);
+    n = read(fd, buf, 6);
+    if(n>0) { buf[n]='\0'; printf("From offset 7 (6 bytes): '%s'\n", buf); }
+    close(fd);
+
+    /* fcntl */
+    fd = open("fm_demo.txt", O_RDONLY);
+    int flags = fcntl(fd, F_GETFL);
+    printf("Open flags (decimal): %d\n", flags);
+    close(fd);
+
+    /* stat */
+    struct stat st;
+    if(stat("fm_demo.txt", &st)==0) {
+        printf("Size: %ld bytes, Inode: %ld\n", st.st_size, st.st_ino);
+    }
+
+    /* directory listing using opendir/readdir */
+    DIR *dp = opendir(".");
+    struct dirent *de;
+    printf("\nDirectory listing (.)\n");
+    while((de = readdir(dp))!=NULL) printf("%s\n", de->d_name);
+    closedir(dp);
+
+    return 0;
+}
