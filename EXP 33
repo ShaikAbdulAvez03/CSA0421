@@ -1,0 +1,42 @@
+/* optimal_paging.c */
+#include <stdio.h>
+#include <limits.h>
+
+int searchFuture(int frames[], int nframes, int ref[], int refs, int index){
+    int i,j, far = -1, pos = -1;
+    for(i=0;i<nframes;i++){
+        int found=0;
+        for(j=index+1;j<refs;j++){
+            if(frames[i]==ref[j]) { found=1; if(j>far){ far=j; pos=i; } break; }
+        }
+        if(!found) return i; /* not used in future => best to replace */
+    }
+    return (pos==-1)?0:pos;
+}
+
+int main(){
+    int nframes; printf("Frames: "); scanf("%d",&nframes);
+    int ref[] = {7,0,1,2,0,3,0,4,2,3,0,3,2};
+    int refs = sizeof(ref)/sizeof(ref[0]);
+    int frames[50]; for(int i=0;i<nframes;i++) frames[i]=-1;
+    int faults=0;
+    for(int i=0;i<refs;i++){
+        int found=0;
+        for(int j=0;j<nframes;j++) if(frames[j]==ref[i]) { found=1; break; }
+        if(!found){
+            int empty=-1;
+            for(int j=0;j<nframes;j++) if(frames[j]==-1){ empty=j; break; }
+            if(empty!=-1) frames[empty]=ref[i];
+            else {
+                int replace = searchFuture(frames,nframes,ref,refs,i);
+                frames[replace]=ref[i];
+            }
+            faults++;
+        }
+        printf("Ref:%d -> ", ref[i]);
+        for(int j=0;j<nframes;j++) printf("%d ", frames[j]);
+        printf("\n");
+    }
+    printf("Total Faults=%d\n", faults);
+    return 0;
+}
