@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+int main() {
+    int fd;
+    char buffer[100];
+
+    // open and write
+    fd = open("sample.txt", O_CREAT | O_WRONLY, 0644);
+    write(fd, "UNIX System Call Demo\n", 22);
+    close(fd);
+
+    // read
+    fd = open("sample.txt", O_RDONLY);
+    read(fd, buffer, 22);
+    buffer[22] = '\0';
+    printf("File Content: %s\n", buffer);
+
+    // lseek
+    lseek(fd, 0, SEEK_SET);
+    close(fd);
+
+    // stat
+    struct stat st;
+    stat("sample.txt", &st);
+    printf("File Size: %ld bytes\n", st.st_size);
+
+    // directory reading
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(".");
+    printf("\nDirectory Contents:\n");
+    while ((dir = readdir(d)) != NULL) {
+        printf("%s\n", dir->d_name);
+    }
+    closedir(d);
+
+    return 0;
+}
