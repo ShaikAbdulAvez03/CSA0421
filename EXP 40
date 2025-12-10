@@ -1,0 +1,23 @@
+/* file_perms.c */
+#include <stdio.h>
+#include <sys/stat.h>
+
+void printPerms(mode_t m){
+    printf("%c%c%c ", (m & S_IRUSR)?'r':'-', (m & S_IWUSR)?'w':'-', (m & S_IXUSR)?'x':'-');
+    printf("%c%c%c ", (m & S_IRGRP)?'r':'-', (m & S_IWGRP)?'w':'-', (m & S_IXGRP)?'x':'-');
+    printf("%c%c%c\n", (m & S_IROTH)?'r':'-', (m & S_IWOTH)?'w':'-', (m & S_IXOTH)?'x':'-');
+}
+
+int main(int argc, char *argv[]){
+    const char *fname = (argc>1)?argv[1]:"fm_demo.txt";
+    struct stat st;
+    if(stat(fname,&st)!=0){ perror("stat"); return 1; }
+    printf("Permissions for %s:\n", fname);
+    printPerms(st.st_mode);
+    printf("\nUser types in Linux:\n");
+    printf("1) Root: has all privileges; uid=0\n");
+    printf("2) Owner/User: creator of the file; permissions shown as first triad\n");
+    printf("3) Group: users in same group; permissions shown as second triad\n");
+    printf("4) Others: everyone else; third triad\n");
+    return 0;
+}
