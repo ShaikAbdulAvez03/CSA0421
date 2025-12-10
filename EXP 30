@@ -1,0 +1,29 @@
+/* thread_ops.c */
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+
+void* fun(void* arg){
+    pthread_t self = pthread_self();
+    printf("Thread started, id = %lu\n", (unsigned long)self);
+    pthread_exit((void*)0);
+    return NULL;
+}
+
+int main(){
+    pthread_t t;
+    pthread_create(&t, NULL, fun, NULL);
+    /* create done */
+    void *res;
+    pthread_join(t, &res); /* join */
+    printf("Thread joined\n");
+
+    pthread_t mainid = pthread_self();
+    if(pthread_equal(mainid, t))
+        printf("Main thread equal to t\n");
+    else
+        printf("Main thread NOT equal to t\n");
+
+    printf("Main exiting with exit(0)\n");
+    return 0;
+}
