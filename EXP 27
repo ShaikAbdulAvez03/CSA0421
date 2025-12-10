@@ -1,0 +1,17 @@
+/* my_ls.c */
+#include <stdio.h>
+#include <dirent.h>
+
+int main(int argc, char *argv[]) {
+    const char *path = (argc>1)? argv[1] : ".";
+    DIR *dp = opendir(path);
+    if(!dp) { perror("opendir"); return 1; }
+    struct dirent *d;
+    while((d = readdir(dp)) != NULL) {
+        if(d->d_name[0]=='.') continue; /* skip hidden for simple ls-like */
+        printf("%s  ", d->d_name);
+    }
+    printf("\n");
+    closedir(dp);
+    return 0;
+}
