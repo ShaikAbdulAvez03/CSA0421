@@ -1,0 +1,27 @@
+/* contiguous_alloc.c */
+#include <stdio.h>
+#include <string.h>
+
+/*
+ Simulate a file whose records are stored consecutively.
+ Accessing record i requires scanning from start to i.
+*/
+int main(){
+    char *records[] = {
+        "Record0: John",
+        "Record1: Alice",
+        "Record2: Bob",
+        "Record3: Eve",
+        "Record4: Mallory"
+    };
+    int n = sizeof(records)/sizeof(records[0]);
+    int r;
+    printf("Enter record index to access (0-%d): ", n-1);
+    scanf("%d",&r);
+    if(r<0||r>=n){ printf("Invalid\n"); return 1;}
+    printf("Scanning from 0 to %d:\n", r);
+    for(int i=0;i<=r;i++){
+        printf("Visited %d -> %s\n", i, records[i]);
+    }
+    return 0;
+}
