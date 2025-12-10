@@ -1,0 +1,24 @@
+/* linked_alloc.c */
+#include <stdio.h>
+
+typedef struct Block {
+    int id;
+    char data[32];
+    int next; /* -1 -> end */
+} Block;
+
+int main(){
+    /* simulate disk blocks */
+    Block disk[10];
+    /* create a file as a linked chain: blocks 2->5->7 */
+    disk[2].id=2; strcpy(disk[2].data,"A"); disk[2].next=5;
+    disk[5].id=5; strcpy(disk[5].data,"B"); disk[5].next=7;
+    disk[7].id=7; strcpy(disk[7].data,"C"); disk[7].next=-1;
+
+    int head = 2;
+    printf("Following linked blocks for file:\n");
+    for(int cur=head; cur!=-1; cur=disk[cur].next){
+        printf("Block %d: %s\n", disk[cur].id, disk[cur].data);
+    }
+    return 0;
+}
