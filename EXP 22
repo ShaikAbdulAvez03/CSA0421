@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+int main() {
+    int fd = open("io.txt", O_CREAT | O_RDWR, 0644);
+    write(fd, "Hello UNIX\n", 11);
+
+    // fcntl
+    int flags = fcntl(fd, F_GETFL);
+    printf("File Access Mode: %d\n", flags);
+
+    // lseek
+    lseek(fd, 0, SEEK_SET);
+    char buf[20];
+    read(fd, buf, 11);
+    buf[11] = '\0';
+    printf("Read Data: %s\n", buf);
+
+    // stat
+    struct stat s;
+    stat("io.txt", &s);
+    printf("Inode No: %ld\n", s.st_ino);
+
+    // directory listing
+    DIR *dp = opendir(".");
+    struct dirent *entry;
+    while ((entry = readdir(dp)) != NULL)
+        printf("%s\n", entry->d_name);
+
+    closedir(dp);
+    close(fd);
+    return 0;
+}
