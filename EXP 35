@@ -1,0 +1,13 @@
+/* indexed_alloc.c */
+#include <stdio.h>
+
+int main(){
+    /* index block holds block numbers for file's logical blocks */
+    int index_block[] = {101, 102, 103, 104}; /* disk block numbers */
+    int data_block_count = sizeof(index_block)/sizeof(index_block[0]);
+    printf("File has %d logical blocks.\n", data_block_count);
+    for(int i=0;i<data_block_count;i++){
+        printf("Logical block %d -> Disk block %d (read content...)\n", i, index_block[i]);
+    }
+    return 0;
+}
