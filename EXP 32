@@ -1,0 +1,34 @@
+/* lru_paging.c */
+#include <stdio.h>
+#include <limits.h>
+
+int main(){
+    int nframes; printf("Frames: "); scanf("%d",&nframes);
+    int ref[] = {7,0,1,2,0,3,0,4,2,3,0,3,2};
+    int refs = sizeof(ref)/sizeof(ref[0]);
+    int frames[50], time[50];
+    for(int i=0;i<nframes;i++){ frames[i]=-1; time[i]=0; }
+    int faults=0, t=0;
+    for(int i=0;i<refs;i++){
+        t++;
+        int found=-1;
+        for(int j=0;j<nframes;j++) if(frames[j]==ref[i]) { found=j; time[j]=t; break; }
+        if(found==-1){
+            int empty=-1;
+            for(int j=0;j<nframes;j++) if(frames[j]==-1) { empty=j; break;}
+            if(empty!=-1){
+                frames[empty]=ref[i]; time[empty]=t;
+            } else {
+                int lru=0;
+                for(int j=1;j<nframes;j++) if(time[j]<time[lru]) lru=j;
+                frames[lru]=ref[i]; time[lru]=t;
+            }
+            faults++;
+        }
+        printf("Ref:%d -> ", ref[i]);
+        for(int j=0;j<nframes;j++) printf("%d ", frames[j]);
+        printf("\n");
+    }
+    printf("Total Faults=%d\n", faults);
+    return 0;
+}
